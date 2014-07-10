@@ -1,0 +1,25 @@
+{
+  "name": "box-boards",
+  "version": "0.1.0",
+  "description": "An app for doing kanban on Box",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitenterprise.inside-box.net/mbasta/boards.git"
+  },
+  "keywords": [
+    "boards",
+    "kanban",
+    "box"
+  ],
+  "author": "Matt Basta <basta@box.com>",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.5.1",
+    "socket.io": "^1.0.6"
+  }
+}

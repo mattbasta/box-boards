@@ -1,0 +1,61 @@
+/* YUI 3.5.0 reset.css (http://developer.yahoo.com/yui/3/cssreset/) - http://cssreset.com */
+html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal}ol,ul{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}q:before,q:after{content:''}abbr,acronym{border:0;font-variant:normal}sup{vertical-align:text-top}sub{vertical-align:text-bottom}input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit}input,textarea,select{*font-size:100%}legend{color:#000}#yui3-css-stamp.cssreset{display:none}
+
+body {
+    font-family: sans-serif;
+    padding-top: 50px;
+}
+
+header {
+    background: rgba(0, 0, 0, 0.7);
+    height: 50px;
+    left: 0;
+    line-height: 50px;
+    padding: 0 10px;
+    position: fixed;
+    right: 0;
+    text-align: right;
+    top: 0;
+}
+
+header h1 {
+    color: #fff;
+    left: 10px;
+    position: absolute;
+}
+
+.board {
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+}
+
+.board .column {
+    background: #ddd;
+    border-radius: 5px;
+    flex: 0 0 250px;
+    margin-right: 10px;
+    padding: 10px;
+    width: 250px;
+}
+
+.column h1 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.column .card {
+    background: #fff;
+    border: 1px solid #aaa;
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    margin-bottom: 5px;
+    padding: 10px;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.card .charms {
+    color: #999;
+}
