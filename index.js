@@ -6,10 +6,14 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+var boxContent = require('./lib/boxContent.js');
+
+
 var boards = {};
 
-function getBoard(id) {
-    if (!boards[id]) {
+function getBoard(id, auth, cb) {
+
+    function createBoard() {
         function col(title) {
             return {
                 key: 'col_' + title,
@@ -17,7 +21,7 @@ function getBoard(id) {
                 cards: []
             };
         }
-        boards[id] = {
+        return boards[id] = {
             title: 'Untitled Board',
             board: [
                 col('Done'),
@@ -29,13 +33,36 @@ function getBoard(id) {
             subscribers: []
         };
     }
-    return boards[id];
+
+    if (!boards[id]) {
+
+        boxContent.get(id, auth, function(err, body) {
+            if (err) {
+                console.warn('Could not read from box');
+                cb(null);
+                return;
+            }
+            boards[id] = body;
+            body.subscribers = [];
+            cb(body);
+        });
+        return;
+    }
+    cb(boards[id]);
 }
 
 
-app.get('/:id', function(req, res){
+app.get('/board/:id', function(req, res){
+    var auth = req.param('auth');
     var id = req.params.id;
-    res.send(fs.readFileSync('src/index.html').toString().replace('BOARD_ID', id));
+    res.send(fs.readFileSync('src/index.html').toString().replace('BOARD_ID', id).replace('AUTH', auth));
+});
+
+app.use('/redirect', function(req, res){
+    var auth = req.param('auth_code');
+    var file = req.param('file');
+    res.set('Location', '/board/' + file + '?auth=' + auth);
+    res.send(302, 'Redirecting...');
 });
 
 app.use(express.static(__dirname + '/src'));
@@ -75,14 +102,19 @@ io.on('connection', function(socket) {
         data.subscribers.forEach(function(user) {
             user.emit.apply(user, args);
         });
+        boxContent.put(data, function(err, body) {
+            if (err) console.error(err);
+        });
     }
 
-    socket.on('boardID', function(boardID) {
-        data = getBoard(boardID);
-        data.subscribers.push(socket);
-        socket.removeAllListeners('boardID');
-        init();
-        socket.emit('newBoard', {title: data.title, board: data.board});
+    socket.on('getBoard', function(req) {
+        getBoard(req.boardID, req.auth, function(newBoard) {
+            data = newBoard;
+            data.subscribers.push(socket);
+            socket.removeAllListeners('boardID');
+            init();
+            socket.emit('newBoard', {title: data.title, board: data.board});
+        });
     });
 
     function init() {
@@ -155,7 +187,6 @@ io.on('connection', function(socket) {
 
         socket.on('cardUpdate', function(event) {
             var card = findCard(event.key);
-            console.log(card.key, event.field, event.value);
 
             // TODO: Sanitize this.
             card[event.field] = event.value;

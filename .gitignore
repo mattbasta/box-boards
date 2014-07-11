@@ -35,4 +35,5 @@ _assets
 node_modules/
 npm-debug.log
 
-src/js/compiled
+lib/constants.js
+backup/
