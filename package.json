@@ -19,7 +19,9 @@
   "author": "Matt Basta <basta@box.com>",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.5.1",
-    "socket.io": "^1.0.6"
+    "express": "4.5.*",
+    "request": "2.37.*",
+    "socket.io": "1.0.*",
+    "superagent": "0.18.*"
   }
 }
