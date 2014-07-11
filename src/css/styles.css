@@ -18,31 +18,74 @@ header {
     top: 0;
 }
 
+header input,
 header h1 {
+    background: transparent;
+    border: 0;
+    bottom: 0;
     color: #fff;
+    display: inline;
     left: 10px;
     position: absolute;
+    top: 0;
+    vertical-align: middle;
+}
+
+nav {
+    padding: 10px;
+}
+
+button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    background: #9cf;
+    border: 0;
+    border-radius: 3px;
+    font-size: 16px;
+    padding: 5px 10px;
+}
+button:hover {
+    background: #bdf;
+}
+button:active {
+    background: #8be;
 }
 
 .board {
-    display: flex;
-    flex-direction: row;
+/*    display: flex;
+    flex-direction: row;*/
     padding: 10px;
 }
 
 .board .column {
     background: #ddd;
     border-radius: 5px;
-    flex: 0 0 250px;
+    display: inline-block;
+    /*flex: 0 0 250px;*/
     margin-right: 10px;
     padding: 10px;
+    position: relative;
+    vertical-align: top;
     width: 250px;
+    z-index: 2;
 }
 
-.column h1 {
+.column h1,
+.column input {
     font-size: 16px;
     font-weight: bold;
     margin-bottom: 10px;
+}
+
+.column .cards {
+    margin-bottom: 10px;
+}
+
+.column .cards:empty {
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    min-height: 50px;
 }
 
 .column .card {
@@ -51,11 +94,120 @@ header h1 {
     border-bottom-width: 2px;
     border-radius: 3px;
     margin-bottom: 5px;
+    overflow: hidden;
     padding: 10px;
+    text-overflow: ellipsis;
     user-select: none;
     -webkit-user-select: none;
+    z-index: 5;
 }
 
 .card .charms {
     color: #999;
+}
+
+.card[data-has-image] {
+    background-size: cover;
+    padding-top: 200px;
+}
+.card[data-has-image] span {
+    background: rgba(0, 0, 0, 0.7);
+    bottom: 0;
+    color: #fff;
+    left: 0;
+    padding: 10px;
+    position: absolute;
+    right: 0;
+}
+
+/********************************************************************/
+
+[data-draggable] {
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    transform: rotate(0);
+    -webkit-transform: rotate(0);
+    transition: box-shadow 0.3s, transform 0.2s;
+    -webkit-transition: box-shadow 0.3s, -webkit-transform 0.2s;
+    z-index: 5;
+}
+
+.ui-sortable-helper {
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.25);
+    transform: rotate(5deg);
+    -webkit-transform: rotate(3deg);
+}
+
+/********************************************************************/
+
+.popup-wrapper:before {
+    background: rgba(0, 0, 0, 0.75);
+    bottom: 0;
+    content: "";
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 9;
+}
+
+.popup {
+    background: #fff;
+    border-radius: 3px;
+    bottom: 0;
+    height: 400px;
+    left: 0;
+    margin: auto;
+    padding: 20px;
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 400px;
+    z-index: 10;
+}
+
+.popup .close-button {
+    color: inherit;
+    cursor: pointer;
+    font-size: 20px;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    transition: color 0.2s;
+}
+.popup .close-button:hover {
+    color: blue;
+    text-decoration: none;
+}
+
+.popup h1 {
+    color: #666;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+.popup input,
+.popup textarea {
+    background: transparent;
+    border: 1px dashed #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+.popup [data-prop=title] {
+    display: block;
+    width: 85%;
+}
+.popup [data-prop=description] {
+    display: block;
+    width: 95%;
+}
+
+.popup hr {
+    border: 0;
+    border-bottom: 1px solid #ccc;
+    display: block;
+    margin: 10px 0;
 }

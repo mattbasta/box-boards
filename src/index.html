@@ -4,7 +4,7 @@
   <title>Box Boards</title>
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="stylesheet" href="/css/font-awesome.min.css">
-  <meta name="box-board" content="b123">
+  <meta name="box-board" content="BOARD_ID">
 </head>
 <body>
   <header>
@@ -16,16 +16,34 @@
     <nav>
       <button class="new">New</button>
     </nav>
-    <section class="board-target">
+    <section class="board">
       Loading...
     </section>
   </main>
 
+  <script type="text/template" id="cardEdit">
+    <input type="text" data-prop="title" class="title" placeholder="Title">
+    <textarea data-prop="description"></textarea>
+    <hr>
+    <label>
+      <span>Image URL:</span>
+      <input type="url" data-prop="image" placeholder="Image URL">
+    </label>
+  </script>
+
   <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-  <script src="http://fb.me/react-0.10.0.js"></script>
+  <script src="/js/jquery-ui.min.js"></script>
 
   <script src="/socket.io/socket.io.js"></script>
-  <script src="/js/compiled/main.js"></script>
+  <script src="/js/amd.js"></script>
+  <script src="/js/card.js"></script>
+  <script src="/js/column.js"></script>
+  <script src="/js/comm.js"></script>
+  <script src="/js/escape.js"></script>
   <script src="/js/events.js"></script>
+  <script src="/js/eventtarget.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/popup.js"></script>
+  <script>require('main');</script>
 </body>
 </html>

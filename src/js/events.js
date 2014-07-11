@@ -1,9 +1,5 @@
-window.services.events = (function(application) {
+define('events', [], function() {
     'use strict';
-
-    //--------------------------------------------------------------------------
-    // Private
-    //--------------------------------------------------------------------------
 
     /**
      * @param {HTMLElement} elem The element to put the binding expando on.
@@ -61,9 +57,6 @@ window.services.events = (function(application) {
         return events.split(/\s*,\s*/g)
     }
 
-    //--------------------------------------------------------------------------
-    // Public
-    //--------------------------------------------------------------------------
     return {
         /**
          * Starts listening for an event on an element. An ID is returned
@@ -143,4 +136,4 @@ window.services.events = (function(application) {
             elem._bindings[event] = newEventList;
         }
     };
-}());
+});
