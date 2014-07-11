@@ -29,26 +29,25 @@ function getBoard(id, auth, cb) {
                 col('Blocked'),
                 col('In Progress'),
                 col('Prioritize')
-            ],
-            subscribers: []
+            ]
         };
     }
 
-    if (!boards[id]) {
-
-        boxContent.get(id, auth, function(err, body) {
-            if (err) {
-                console.warn('Could not read from box');
-                cb(null);
-                return;
-            }
-            boards[id] = body;
-            body.subscribers = [];
-            cb(body);
-        });
+    if (boards[id]) {
+        cb(boards[id]);
         return;
     }
-    cb(boards[id]);
+
+    boxContent.get(id, auth, function(err, body) {
+        if (err) {
+            console.warn('Could not read from box', err);
+            cb(null);
+            return;
+        }
+        boards[id] = body;
+        body.subscribers = [];
+        cb(body);
+    });
 }
 
 
@@ -109,6 +108,7 @@ io.on('connection', function(socket) {
 
     socket.on('getBoard', function(req) {
         getBoard(req.boardID, req.auth, function(newBoard) {
+            if (!newBoard) return;
             data = newBoard;
             data.subscribers.push(socket);
             socket.removeAllListeners('boardID');
