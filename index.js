@@ -193,6 +193,16 @@ io.on('connection', function(socket) {
             broadcast('boardTitle', {title: event});
         });
 
+        socket.on('boardImage', function(event) {
+            data.image = event;
+            broadcast('boardImage', {image: event});
+        });
+
+        socket.on('boardColor', function(event) {
+            data.color = event;
+            broadcast('boardColor', {color: event});
+        });
+
         socket.on('cardUpdate', function(event) {
             var card = findCard(event.key);
 

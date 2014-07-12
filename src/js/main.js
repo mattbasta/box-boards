@@ -1,9 +1,13 @@
-define('main', ['column', 'comm'], function(column, comm) {
+define('main', ['column', 'comm', 'popup'], function(column, comm, popup) {
     'use strict';
 
     var board = document.querySelector('.board');
+    var data;
     var columns = [];
     comm.on('newBoard', function(boardData) {
+        data = boardData;
+        if (boardData.image) document.body.style.backgroundImage = 'url(' + boardData.image + ')';
+        if (boardData.color) document.body.style.backgroundColor = boardData.color;
         $('header h1').text(boardData.title);
         columns = boardData.board.map(column.get);
         board.innerHTML = columns.map(function(col) {
@@ -31,8 +35,22 @@ define('main', ['column', 'comm'], function(column, comm) {
         $(board).append($column);
     });
 
-    comm.on('boardTitle', function(data) {
-        $('header h1').text(data.title);
+    comm.on('boardTitle', function(boardData) {
+        data.title = boardData.title;
+        $('header h1').text(boardData.title);
+    });
+
+    comm.on('boardImage', function(boardData) {
+        data.image = boardData.image;
+        if (boardData.image)
+            document.body.style.backgroundImage = 'url(' + boardData.image + ')';
+        else
+            document.body.style.backgroundImage = '';
+    });
+
+    comm.on('boardColor', function(boardData) {
+        data.color = boardData.color;
+        document.body.style.backgroundColor = boardData.color;
     });
 
     function makeSortable($el) {
@@ -97,10 +115,6 @@ define('main', ['column', 'comm'], function(column, comm) {
         }
     }
 
-    $('nav button').on('click', function() {
-        comm.emit('newColumn', true);
-    });
-
     $('header h1').on('click', function(event) {
         var $target = $(event.target);
         var oldTitle = $target.text();
@@ -114,6 +128,36 @@ define('main', ['column', 'comm'], function(column, comm) {
                 $input.remove();
                 $target.show();
             }
+        });
+    });
+
+    $('nav button.new').on('click', function() {
+        comm.emit('newColumn', true);
+    });
+
+    $('nav button.edit').on('click', function() {
+        var editBox = new popup(document.getElementById('boardEdit').innerHTML);
+        editBox.show();
+
+        var color = data.color || '#fff';
+
+        editBox.$('[data-prop=title]').val(data.title).on('change, blur', function(event) {
+            comm.emit('boardTitle', $(this).val());
+        });
+
+        editBox.$('[data-prop=image]').val(data.image).on('change, blur', function(event) {
+            comm.emit('boardImage', $(this).val());
+        });
+        editBox.$('.color-picker span[data-value="' + color + '"]').addClass('selected');
+
+        editBox.$('.color-picker span').on('click', function(event) {
+            var $this = $(this);
+            $this.closest('.color-picker').find('span.selected').removeClass('selected');
+            $this.addClass('selected');
+            var color = $this.data('value');
+            data.color = color;
+
+            comm.emit('boardColor', color);
         });
     });
 
