@@ -108,6 +108,7 @@ button:active {
 
 .card[data-has-image] {
     background-size: cover;
+    background-position: center center;
     padding-top: 200px;
 }
 .card[data-has-image] span {
