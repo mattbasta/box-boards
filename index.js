@@ -29,8 +29,15 @@ function getBoard(id, auth, cb) {
                 col('Blocked'),
                 col('In Progress'),
                 col('Prioritize')
-            ]
+            ],
+            subscribers: [],
+            fake: true
         };
+    }
+
+    if (!auth) {
+        cb(createBoard());
+        return;
     }
 
     if (boards[id]) {
@@ -52,7 +59,7 @@ function getBoard(id, auth, cb) {
 
 
 app.get('/board/:id', function(req, res){
-    var auth = req.param('auth');
+    var auth = req.param('auth') || '';
     var id = req.params.id;
     res.send(fs.readFileSync('src/index.html').toString().replace('BOARD_ID', id).replace('AUTH', auth));
 });
@@ -101,6 +108,7 @@ io.on('connection', function(socket) {
         data.subscribers.forEach(function(user) {
             user.emit.apply(user, args);
         });
+        if (data.fake) return;
         boxContent.put(data, function(err, body) {
             if (err) console.error(err);
         });

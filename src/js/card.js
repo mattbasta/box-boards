@@ -19,6 +19,7 @@ define('card', ['comm', 'escape', 'events', 'eventtarget', 'popup'], function(co
         this.title = data.title;
         this.description = data.description;
         this.image = data.image;
+        this.color = data.color;
 
         cardEvents.on(this.key, this.handle.bind(this));
         cardCommEvents.on(this.key, this.handleRemote.bind(this));
@@ -26,11 +27,24 @@ define('card', ['comm', 'escape', 'events', 'eventtarget', 'popup'], function(co
 
     Card.prototype.render = function() {
         var style = '';
+        var attrs = '';
         if (this.image) {
-            style += ' style="background-image: url(' + escape(this.image) + ')" data-has-image';
+            style += 'background-image: url(' + escape(this.image) + ');';
+            attrs += ' data-has-image';
+            if (this.color) {
+                style += 'color: ' + escape(this.color) + ';';
+                attrs += ' data-has-color';
+            }
+        } else if (this.color) {
+            style += 'background-color: ' + escape(this.color) + ';';
+            attrs += ' data-has-color';
         }
 
-        return '<div class="card" data-key="' + this.key + '" data-draggable' + style + '>' +
+        if (style) {
+            style = ' style="' + style + '"';
+        }
+
+        return '<div class="card" data-key="' + this.key + '" data-draggable' + style + attrs + '>' +
             '<span>' + escape(this.title) + '</span>' +
             this.renderCharms() +
             '</div>';
@@ -77,13 +91,26 @@ define('card', ['comm', 'escape', 'events', 'eventtarget', 'popup'], function(co
         var editBox = new popup(document.getElementById('cardEdit').innerHTML);
         editBox.show();
 
+        var color = instance.color || '#fff';
+
         editBox.$('[data-prop=title]').val(instance.title);
         editBox.$('[data-prop=description]').val(instance.description);
         editBox.$('[data-prop=image]').val(instance.image);
+        editBox.$('[data-prop=color]').val(color);
+        editBox.$('.color-picker span[data-value="' + color + '"]').addClass('selected');
 
         editBox.$('[data-prop]').on('change, blur', function(event) {
             var $this = $(this);
             comm.emit('cardUpdate', {key: instance.key, field: $this.data('prop'), value: $this.val()});
+        });
+
+        editBox.$('.color-picker span').on('click', function(event) {
+            var $this = $(this);
+            $this.closest('.color-picker').find('span.selected').removeClass('selected');
+            $this.addClass('selected');
+            var color = $this.data('value');
+            $this.closest('label').find('input').val(color);
+            comm.emit('cardUpdate', {key: instance.key, field: 'color', value: color});
         });
 
     }

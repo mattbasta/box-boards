@@ -4,7 +4,7 @@ define('column', ['comm', 'card', 'escape', 'events', 'eventtarget'], function(c
     var columnEvents = new eventtarget.EventTarget();
     var columnCommEvents = new eventtarget.EventTarget();
 
-    events.listen(document.body, 'click, keyup', function(event) {
+    events.listen(document.body, 'click', function(event) {
         var column = $(event.target).closest('.column');
         if (!column.length) return;
         columnEvents.fire(column.data('key'), event.type, event);
@@ -90,51 +90,61 @@ define('column', ['comm', 'card', 'escape', 'events', 'eventtarget'], function(c
 
     Column.prototype.handle = function(type, event) {
         var $target = $(event.target);
+        var $column = $target.closest('.column');
         var me = this;
-        switch (type) {
-            case 'click':
-                switch (event.target.nodeName) {
-                    case 'H1':
-                        var $editor = $(getTextbox()).val(this.title);
-                        $target.after($editor);
-                        $editor.focus();
-                        $target.hide();
-                        break;
+        switch (event.target.nodeName) {
+            case 'H1':
+                var $editor = $(getTextbox()).val(this.title);
+                $target.after($editor);
+                $editor.focus();
+                $editor.on('blur', function() {
+                    $editor.remove();
+                    $column.find('h1').show();
+                }).on('keyup', function(event) {
+                    if (event.keyCode !== 13) return;
+                    var $this = $(this);
+                    var title = $this.val();
+                    me.title = title;
 
-                    case 'BUTTON':
-                        var $editor = $(getTextbox());
-                        $target.after($editor);
-                        $target.hide();
-                        $editor.focus().on('keyup', function(event) {
-                            if (event.keyCode !== 13) return;
-                            comm.emit('newCard', {
-                                title: $editor.val(),
-                                destination: me.key
-                            });
-                            $editor.remove();
-                            $target.show();
-                        });
-                        break;
-
-                }
+                    comm.emit('setColTitle', {key: me.key, title: title});
+                    $column.find('h1').show().text(title);
+                    $this.remove();
+                });
+                $target.hide();
                 break;
 
-            case 'keyup':
-                var $column = $target;
-                while (!$column.is('.column')) {
-                    $column = $column.parent();
+            case 'BUTTON':
+                var $editor = $target.siblings('.add-card-textbox');
+                $target.hide();
+                if (!$editor.length) {
+                    $editor = $(getTextbox()).addClass('add-card-textbox');
+                    $target.after($editor);
+                    $editor.on('blur', function() {
+                        $editor.hide();
+                        $target.show();
+                    }).on('keyup', function(event) {
+                        switch (event.keyCode) {
+                            case 13:
+                                comm.emit('newCard', {
+                                    title: $editor.val(),
+                                    destination: me.key
+                                });
+                                $editor.focus().val('');
+                                break;
+                            case 27:
+                                $editor.hide();
+                                $target.show();
+                                break;
+                            default:
+                                return;
+                        }
+                        event.preventDefault();
+                        event.stopPropagation();
+                    });
                 }
-                if (event.keyCode !== 13) break;
-
-                var title = $target.val();
-                this.title = title;
-                comm.emit('setColTitle', {key: this.key, title: title});
-                $column.find('h1').show().text(title);
-                $target.remove();
+                $editor.show().focus();
                 break;
 
-            default:
-                return;
         }
         event.stopPropagation();
         event.preventDefault();

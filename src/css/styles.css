@@ -1,8 +1,16 @@
+@import url(http://fonts.googleapis.com/css?family=Lato);
+
 /* YUI 3.5.0 reset.css (http://developer.yahoo.com/yui/3/cssreset/) - http://cssreset.com */
 html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal}ol,ul{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}q:before,q:after{content:''}abbr,acronym{border:0;font-variant:normal}sup{vertical-align:text-top}sub{vertical-align:text-bottom}input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit}input,textarea,select{*font-size:100%}legend{color:#000}#yui3-css-stamp.cssreset{display:none}
 
+*, *:before, *:after {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+}
+
 body {
-    font-family: sans-serif;
+    font-family: Lato, sans-serif;
     padding-top: 50px;
 }
 
@@ -39,22 +47,38 @@ button {
     -webkit-appearance: none;
     -moz-appearance: none;
     -ms-appearance: none;
-    background: #9cf;
+    background: transparent;
     border: 0;
-    border-radius: 3px;
-    font-size: 16px;
+    border-radius: 2px;
+    color: #263238;
+    font-size: 12px;
     padding: 5px 10px;
+    text-transform: uppercase;
+    transition: background-color 0.3s, color 0.2s;
 }
 button:hover {
-    background: #bdf;
+    background-color: #455a64;
+    color: #fff;
 }
 button:active {
-    background: #8be;
+    background-color: #37474f;
+    color: #fff;
+}
+
+.get-share-link {
+    color: #fff;
+}
+.get-share-link:hover {
+    background-color: #4dd0e1;
+    color: #006064;
+}
+.get-share-link:active {
+    background-color: #80deea;
+    color: #006064;
 }
 
 .board {
-/*    display: flex;
-    flex-direction: row;*/
+    white-space: nowrap;
     padding: 10px;
 }
 
@@ -80,14 +104,15 @@ button:active {
 
 .column .cards {
     margin-bottom: 10px;
+    min-height: 40px;
 }
 
 .column .cards:empty {
     border: 2px dashed #ccc;
     border-radius: 5px;
-    min-height: 50px;
 }
 
+.add-card-textbox,
 .column .card {
     background: #fff;
     border: 1px solid #aaa;
@@ -99,6 +124,7 @@ button:active {
     text-overflow: ellipsis;
     user-select: none;
     -webkit-user-select: none;
+    width: 100%;
     z-index: 5;
 }
 
@@ -114,11 +140,13 @@ button:active {
 .card[data-has-image] span {
     background: rgba(0, 0, 0, 0.7);
     bottom: 0;
-    color: #fff;
     left: 0;
     padding: 10px;
     position: absolute;
     right: 0;
+}
+.card[data-has-image]:not([data-has-color]) span {
+    color: #fff;
 }
 
 /********************************************************************/
@@ -188,6 +216,17 @@ button:active {
 }
 
 
+.popup label {
+    display: block;
+    line-height: 25px;
+}
+.popup label > span {
+    display: inline-block;
+    padding-right: 10px;
+    text-align: right;
+    width: 30%;
+}
+
 .popup input,
 .popup textarea {
     background: transparent;
@@ -211,4 +250,31 @@ button:active {
     border-bottom: 1px solid #ccc;
     display: block;
     margin: 10px 0;
+}
+
+.color-picker {
+    display: inline-block;
+}
+.color-picker span {
+    border: 1px solid #999;
+    border-radius: 15px;
+    display: inline-block;
+    height: 15px;
+    transition: transform 0.1s;
+    -webkit-transition: -webkit-transform 0.1s;
+    transform: scale(1, 1);
+    width: 15px;
+    vertical-align: middle;
+}
+.color-picker span:not(.selected):hover {
+    border: 1px solid #999;
+    border-radius: 15px;
+    display: inline-block;
+    height: 15px;
+    transform: scale(1.4, 1.4);
+    width: 15px;
+    vertical-align: middle;
+}
+.color-picker span.selected {
+    border: 2px solid #666;
 }

@@ -1,4 +1,4 @@
-define('popup', ['events', 'eventtarget'], function(events, eventtarget) {
+define('popup', ['eventtarget'], function(eventtarget) {
 
     function Popup(contents) {
         var wrapperElem = this.elem = document.createElement('div');
@@ -17,19 +17,26 @@ define('popup', ['events', 'eventtarget'], function(events, eventtarget) {
         var attrEvents = new eventtarget.EventTarget();
         var me = this;
 
-        var resolution = new Promise(function(resolve, reject) {
-            me.resolve = resolve;
-            me.reject = reject;
+        var resolution = $.Deferred();
+        this.resolve = resolution.resolve;
+        this.reject = resolution.reject;
+        resolution.promise(this);
 
-            events.listen(closeButton, 'click', function() {
+        $(closeButton).on('click', this.close.bind(this));
+
+        var closer = function(event) {
+            if (event.keyCode === 27) {
                 me.close();
-            });
+            }
+        };
+        $(window).on('keyup', closer);
+
+        resolution.always(function() {
+            $(window).off('keyup', closer);
         });
 
-        this.then = resolution.then;
-
         this.on = function(eventType, handler) {
-            events.listen(elem, eventType, handler);
+            $(elem).on(eventType, handler);
             attrEvents.on(eventType, handler);
         };
     }
