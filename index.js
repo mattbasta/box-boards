@@ -121,7 +121,12 @@ io.on('connection', function(socket) {
             data.subscribers.push(socket);
             socket.removeAllListeners('boardID');
             init();
-            socket.emit('newBoard', {title: data.title, board: data.board});
+            socket.emit('newBoard', {
+                title: data.title,
+                board: data.board,
+                image: data.image,
+                color: data.color
+            });
         });
     });
 
