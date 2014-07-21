@@ -113,6 +113,12 @@ define('card', ['comm', 'escape', 'events', 'eventtarget', 'popup'], function(co
             comm.emit('cardUpdate', {key: instance.key, field: 'color', value: color});
         });
 
+        editBox.$('.delete-card').on('click', function(event) {
+            if (!confirm('Are you sure you wish to delete "' + instance.title + '"?')) return;
+            editBox.close();
+            comm.emit('cardDelete', {key: instance.key});
+        });
+
     }
 
     return {

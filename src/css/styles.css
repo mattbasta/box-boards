@@ -285,3 +285,14 @@ button:active {
 .color-picker span.selected {
     border: 2px solid #666;
 }
+
+.deleteColumn {
+    border-radius: 50px;
+    display: inline-block;
+    float: right;
+    line-height: 1em;
+    padding: 5px;
+}
+.deleteColumn:hover {
+    background-color: #b00;
+}

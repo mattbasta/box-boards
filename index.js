@@ -36,7 +36,7 @@ function getBoard(id, auth, cb) {
     }
 
     if (!auth) {
-        cb(createBoard());
+        cb(boards[id] || createBoard());
         return;
     }
 
@@ -215,6 +215,38 @@ io.on('connection', function(socket) {
             card[event.field] = event.value;
 
             broadcast('cardUpdate', event);
+
+        });
+
+        socket.on('cardDelete', function(event) {
+            var column;
+            outer:
+            for (var i = 0; i < data.board.length; i++) {
+                for (var j = 0; j < data.board[i].cards.length; j++) {
+                    if (data.board[i].cards[j].key === event.key) {
+                        data.board[i].cards.splice(j, 1);
+                        column = data.board[i].key;
+                        break outer;
+                    }
+                }
+            }
+            if (!column) return;
+
+            broadcast('removeCard', {
+                column: column,
+                key: event.key
+            });
+
+        });
+
+        socket.on('columnDelete', function(event) {
+            for (var i = 0; i < data.board.length; i++) {
+                if (data.board[i].key === event) {
+                    data.board.splice(i, 1);
+                }
+            }
+
+            broadcast('columnDelete', {key: event});
 
         });
     }

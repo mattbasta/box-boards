@@ -26,6 +26,10 @@ define('column', ['comm', 'card', 'escape', 'events', 'eventtarget'], function(c
         columnCommEvents.fire(event.column, 'addCard', event);
     });
 
+    comm.on('columnDelete', function(event) {
+        columnCommEvents.fire(event.key, 'delete', event);
+    });
+
     function Column(data) {
         this.key = data.key;
         this.title = data.title;
@@ -43,6 +47,7 @@ define('column', ['comm', 'card', 'escape', 'events', 'eventtarget'], function(c
                 return card.render();
             }).join('') +
             '</div>' +
+            '<button class="deleteColumn" title="Delete Column">&times;</button>' +
             '<button class="addCard">Add Card</button>' +
             '</div>';
     };
@@ -114,35 +119,44 @@ define('column', ['comm', 'card', 'escape', 'events', 'eventtarget'], function(c
                 break;
 
             case 'BUTTON':
-                var $editor = $target.siblings('.add-card-textbox');
-                $target.hide();
-                if (!$editor.length) {
-                    $editor = $(getTextbox()).addClass('add-card-textbox');
-                    $target.after($editor);
-                    $editor.on('blur', function() {
-                        $editor.hide();
-                        $target.show();
-                    }).on('keyup', function(event) {
-                        switch (event.keyCode) {
-                            case 13:
-                                comm.emit('newCard', {
-                                    title: $editor.val(),
-                                    destination: me.key
-                                });
-                                $editor.focus().val('');
-                                break;
-                            case 27:
+                switch (event.target.className) {
+                    case 'addCard':
+                        var $editor = $target.siblings('.add-card-textbox');
+                        $target.hide();
+                        if (!$editor.length) {
+                            $editor = $(getTextbox()).addClass('add-card-textbox');
+                            $target.after($editor);
+                            $editor.on('blur', function() {
                                 $editor.hide();
                                 $target.show();
-                                break;
-                            default:
-                                return;
+                            }).on('keyup', function(event) {
+                                switch (event.keyCode) {
+                                    case 13:
+                                        comm.emit('newCard', {
+                                            title: $editor.val(),
+                                            destination: me.key
+                                        });
+                                        $editor.focus().val('');
+                                        break;
+                                    case 27:
+                                        $editor.hide();
+                                        $target.show();
+                                        break;
+                                    default:
+                                        return;
+                                }
+                                event.preventDefault();
+                                event.stopPropagation();
+                            });
                         }
-                        event.preventDefault();
-                        event.stopPropagation();
-                    });
+                        $editor.show().focus();
+                        break;
+
+                    case 'deleteColumn':
+                        if (!confirm('Are you sure you wish to delete "' + me.title + '"?')) return;
+                        comm.emit('columnDelete', me.key);
+                        break;
                 }
-                $editor.show().focus();
                 break;
 
         }
