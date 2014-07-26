@@ -53,6 +53,10 @@ define('main', ['column', 'comm', 'popup'], function(column, comm, popup) {
         document.body.style.backgroundColor = boardData.color;
     });
 
+    comm.on('setAvailableCollabs', function(data) {
+        data.availableCollabs = data.collabs;
+    });
+
     function makeSortable($el) {
         $el.find('.cards').sortable({
             update: cardsReordered,

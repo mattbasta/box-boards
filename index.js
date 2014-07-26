@@ -117,7 +117,7 @@ io.on('connection', function(socket) {
         data.subscribers.forEach(function(user) {
             user.emit.apply(user, args);
         });
-        if (data.fake) return;
+        if (args[0] === 'setAvailableCollabs' || data.fake) return;
         boxContent.put(data).then(null, console.error.bind(console));
     }
 
@@ -135,10 +135,15 @@ io.on('connection', function(socket) {
                 color: data.color,
                 availableCollabs: data.availableCollabs
             });
-            if (collabPromise) collabPromise.then(function(collabs) {
-                data.board.availableCollabs = collabs;
-                brodcast('setAvailableCollabs', collabs);
-            });
+            if (collabPromise) {
+                collabPromise.then(function(collabs) {
+                    console.log('Collab promise returned!');
+                    data.availableCollabs = collabs;
+                    broadcast('setAvailableCollabs', {collabs: collabs});
+                });
+            } else {
+                console.warn('No collab promise returned.');
+            }
         });
     });
 
