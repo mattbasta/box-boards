@@ -45,19 +45,28 @@ function getBoard(id, auth, cb) {
         return;
     }
 
-    boxContent.get(id, auth, function(err, body) {
-        if (err) {
-            console.warn('Could not read from box', err);
-            cb(null);
-            return;
-        }
+    boxContent.get(id, auth).then(function(data) {
+        var body = data[0];
+        var collabs = data[1];
         boards[id] = body;
         body.subscribers = [];
-        cb(body);
+        cb(body, collabs);
+    }, function(err) {
+        console.warn('Could not read from box', err);
+        cb(null);
     });
 }
 
 
+app.get('/', function(req, res){
+    res.send(fs.readFileSync('src/landing.html').toString());
+});
+app.get('/auth', function(req, res){
+    res.redirect(
+        'https://www.box.com/api/oauth2/authorize' +
+        '?response_type=code' +
+        '&client_id=' + process.env.CLIENT_ID);
+});
 app.get('/board/:id', function(req, res){
     var auth = req.param('auth') || '';
     var id = req.params.id;
@@ -109,13 +118,11 @@ io.on('connection', function(socket) {
             user.emit.apply(user, args);
         });
         if (data.fake) return;
-        boxContent.put(data, function(err, body) {
-            if (err) console.error(err);
-        });
+        boxContent.put(data).then(null, console.error.bind(console));
     }
 
     socket.on('getBoard', function(req) {
-        getBoard(req.boardID, req.auth, function(newBoard) {
+        getBoard(req.boardID, req.auth, function(newBoard, collabPromise) {
             if (!newBoard) return;
             data = newBoard;
             data.subscribers.push(socket);
@@ -125,7 +132,12 @@ io.on('connection', function(socket) {
                 title: data.title,
                 board: data.board,
                 image: data.image,
-                color: data.color
+                color: data.color,
+                availableCollabs: data.availableCollabs
+            });
+            if (collabPromise) collabPromise.then(function(collabs) {
+                data.board.availableCollabs = collabs;
+                brodcast('setAvailableCollabs', collabs);
             });
         });
     });
@@ -186,6 +198,8 @@ io.on('connection', function(socket) {
                 key: 'card_' + Date.now(),
                 title: event.title,
                 description: '',
+                color: null,
+                image: null,
                 comments: []
             };
             column.cards.push(card);

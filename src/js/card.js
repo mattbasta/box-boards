@@ -21,6 +21,8 @@ define('card', ['comm', 'escape', 'events', 'eventtarget', 'popup'], function(co
         this.image = data.image;
         this.color = data.color;
 
+        this.comments = data.comments;
+
         cardEvents.on(this.key, this.handle.bind(this));
         cardCommEvents.on(this.key, this.handleRemote.bind(this));
     }
@@ -53,6 +55,7 @@ define('card', ['comm', 'escape', 'events', 'eventtarget', 'popup'], function(co
     Card.prototype.getCharms = function() {
         var charms = [];
         if (this.description) charms.push(['info', 'Has Description']);
+        if (this.comments && this.comments.length) charms.push(['comments', 'Has Comments']);
         return charms;
     };
 
