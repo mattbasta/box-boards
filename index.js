@@ -30,6 +30,9 @@ function getBoard(id, auth, cb) {
                 col('In Progress'),
                 col('Prioritize')
             ],
+            availableCollabs: [
+                'John Doe',
+            ],
             subscribers: [],
             fake: true
         };
