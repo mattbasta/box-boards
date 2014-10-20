@@ -1,4 +1,4 @@
-define('card', ['comm', 'escape', 'events', 'eventtarget', 'popup'], function(comm, escape, events, eventtarget, popup) {
+define('card', ['collabs', 'comm', 'escape', 'events', 'eventtarget', 'popup'], function(collabs, comm, escape, events, eventtarget, popup) {
     'use strict';
 
     var cardEvents = new eventtarget.EventTarget();
@@ -101,6 +101,28 @@ define('card', ['comm', 'escape', 'events', 'eventtarget', 'popup'], function(co
         editBox.$('[data-prop=image]').val(instance.image);
         editBox.$('[data-prop=color]').val(color);
         editBox.$('.color-picker span[data-value="' + color + '"]').addClass('selected');
+
+
+        function addCollab() {
+            var member = editBox.$('.members input').val();
+            var members = collabs.get();
+            if (members.indexOf(member) === -1) {
+                alert('Could not find an assignee with that name.');
+                return;
+            }
+            var oldMembers = instance.members || [];
+            if (oldMembers.indexOf(member) !== -1) {
+                alert('That member is already assigned.');
+                return;
+            }
+            comm.emit('cardUpdate', {key: instance.key, field: 'members', value: oldMembers.concat([member])});
+        }
+        editBox.$('.members button').on('click', addCollab);
+        editBox.$('.members input').on('keyUp', function(e) {
+            if (e.keyCode !== 13) return;
+            e.preventDefault();
+            addCollab();
+        });
 
         editBox.$('[data-prop]').on('change, blur', function(event) {
             var $this = $(this);

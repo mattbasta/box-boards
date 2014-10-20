@@ -1,4 +1,4 @@
-define('main', ['column', 'comm', 'popup'], function(column, comm, popup) {
+define('main', ['collabs', 'column', 'comm', 'popup'], function(collabs, column, comm, popup) {
     'use strict';
 
     var board = document.querySelector('.board');
@@ -55,6 +55,7 @@ define('main', ['column', 'comm', 'popup'], function(column, comm, popup) {
 
     comm.on('setAvailableCollabs', function(data) {
         data.availableCollabs = data.collabs;
+        collabs.set(data.collabs);
     });
 
     function makeSortable($el) {

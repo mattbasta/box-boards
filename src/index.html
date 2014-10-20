@@ -70,6 +70,13 @@
       </div>
     </label>
     <hr>
+    <label class="members">
+      <span>Add Member:</span>
+      <input type="text" list="dl-collabs">
+      <button>Add</button>
+    </label>
+    <ul class="member-list"></ul>
+    <hr>
     <button class="delete-card">Delete Card...</button>
   </script>
 
@@ -79,6 +86,7 @@
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/amd.js"></script>
   <script src="/js/card.js"></script>
+  <script src="/js/collabs.js"></script>
   <script src="/js/column.js"></script>
   <script src="/js/comm.js"></script>
   <script src="/js/escape.js"></script>
@@ -87,5 +95,6 @@
   <script src="/js/main.js"></script>
   <script src="/js/popup.js"></script>
   <script>require('main');</script>
+  <datalist id="dl-collabs"></datalist>
 </body>
 </html>
