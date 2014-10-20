@@ -163,6 +163,7 @@ button:active {
     border-radius: 3px;
     display: inline-block;
     line-height: 30px;
+    margin-left: 3px;
     text-align: center;
     width: 30px;
 }

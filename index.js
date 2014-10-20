@@ -32,6 +32,7 @@ function getBoard(id, auth, cb) {
             ],
             availableCollabs: [
                 'John Doe',
+                'Matt Basta',
             ],
             subscribers: [],
             fake: true

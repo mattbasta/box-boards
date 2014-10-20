@@ -17,7 +17,7 @@ define('collabs', ['escape'], function(escape) {
             return collabList;
         },
         getColor: function(name) {
-            return 'hsl(' + (name.charCodeAt(0) % 128) + ',75%,75%)';
+            return 'hsl(' + (Math.pow(name.charCodeAt(0), 8) % 128) + ',75%,75%)';
         }
     };
 });
