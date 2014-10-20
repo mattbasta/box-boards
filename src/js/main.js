@@ -8,6 +8,7 @@ define('main', ['collabs', 'column', 'comm', 'popup'], function(collabs, column,
         data = boardData;
         if (boardData.image) document.body.style.backgroundImage = 'url(' + boardData.image + ')';
         if (boardData.color) document.body.style.backgroundColor = boardData.color;
+        if (boardData.availableCollabs) collabs.set(data.availableCollabs);
         $('header h1').text(boardData.title);
         columns = boardData.board.map(column.get);
         board.innerHTML = columns.map(function(col) {

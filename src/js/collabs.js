@@ -2,7 +2,9 @@ define('collabs', ['escape'], function(escape) {
     'use strict';
 
     var collabList = [];
-    var collabDL = document.getElementById('dl-collabs');
+    var collabDL = document.createElement('datalist');
+    collabDL.id = 'dl-collabs';
+    document.body.appendChild(collabDL);
 
     return {
         set: function(collabs) {

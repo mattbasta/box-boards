@@ -142,7 +142,7 @@ io.on('connection', function(socket) {
                     broadcast('setAvailableCollabs', {collabs: collabs});
                 });
             } else {
-                console.warn('No collab promise returned.');
+                console.log('No collab promise returned.');
             }
         });
     });
