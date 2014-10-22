@@ -233,6 +233,8 @@ io.on('connection', function(socket) {
 
         socket.on('cardUpdate', function(event) {
             var card = findCard(event.key);
+            // Ignore fields that don't already exist.
+            if (!(event.field in card)) return;
 
             // TODO: Sanitize this.
             card[event.field] = event.value;

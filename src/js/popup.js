@@ -22,16 +22,17 @@ define('popup', ['eventtarget'], function(eventtarget) {
         this.reject = resolution.reject;
         resolution.promise(this);
 
-        $(closeButton).on('click', this.close.bind(this));
+        $(closeButton).on('click', resolution.reject);
 
         var closer = function(event) {
             if (event.keyCode === 27) {
-                me.close();
+                resolution.reject();
             }
         };
         $(window).on('keyup', closer);
 
         resolution.always(function() {
+            me.close();
             $(window).off('keyup', closer);
         });
 

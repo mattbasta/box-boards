@@ -1,4 +1,6 @@
-define('card', ['collabs', 'comm', 'escape', 'events', 'eventtarget', 'popup'], function(collabs, comm, escape, events, eventtarget, popup) {
+define('card',
+    ['card.edit', 'collabs', 'comm', 'escape', 'events', 'eventtarget'],
+    function(cardEdit, collabs, comm, escape, events, eventtarget) {
     'use strict';
 
     var cardEvents = new eventtarget.EventTarget();
@@ -87,7 +89,7 @@ define('card', ['collabs', 'comm', 'escape', 'events', 'eventtarget', 'popup'], 
     Card.prototype.handle = function(type, event) {
         switch (type) {
             case 'click':
-                showEditBox(this, event);
+                cardEdit.showEditBox(this, event);
                 break;
             default:
                 return;
@@ -105,83 +107,6 @@ define('card', ['collabs', 'comm', 'escape', 'events', 'eventtarget', 'popup'], 
                 break;
         }
     };
-
-    function showEditBox(instance, event) {
-        var $card = $(event.target).closest('.card');
-        var editBox = new popup(document.getElementById('cardEdit').innerHTML);
-        editBox.show();
-
-        var color = instance.color || '#fff';
-
-        editBox.$('[data-prop=title]').val(instance.title);
-        editBox.$('[data-prop=description]').val(instance.description);
-        editBox.$('[data-prop=image]').val(instance.image);
-        editBox.$('[data-prop=color]').val(color);
-        editBox.$('.color-picker span[data-value="' + color + '"]').addClass('selected');
-
-        function setMemberList() {
-            editBox.$('.member-list').html(instance.members.map(function(member) {
-                var $entry = $('<li>');
-                $entry.text(member);
-                var $closeButton = $('<a class="remove-collab" href="#">&times;</a>');
-                $closeButton.attr('data-collab', member);
-                $entry.append($closeButton);
-                return $entry[0].outerHTML;
-            }).join(''));
-        }
-        setMemberList();
-
-        function addCollab() {
-            var member = editBox.$('.members input').val();
-            var members = collabs.get();
-            if (members.indexOf(member) === -1) {
-                alert('Could not find an assignee with that name.');
-                return;
-            }
-            if (instance.members.indexOf(member) !== -1) {
-                alert('That member is already assigned.');
-                return;
-            }
-            instance.members.push(member);
-            comm.emit('cardUpdate', {key: instance.key, field: 'members', value: instance.members});
-            setMemberList();
-        }
-        editBox.$('.members button').on('click', addCollab);
-        editBox.$('.member-list .remove-collab').on('click', function(e) {
-            var collab = $(e.target).data('collab');
-            instance.members = instance.members.filter(function(mem) {
-                return mem !== collab;
-            });
-            comm.emit('cardUpdate', {key: instance.key, field: 'members', value: instance.members});
-            setMemberList();
-        });
-        editBox.$('.members input').on('keyUp', function(e) {
-            if (e.keyCode !== 13) return;
-            e.preventDefault();
-            addCollab();
-        });
-
-        editBox.$('[data-prop]').on('change, blur', function(event) {
-            var $this = $(this);
-            comm.emit('cardUpdate', {key: instance.key, field: $this.data('prop'), value: $this.val()});
-        });
-
-        editBox.$('.color-picker span').on('click', function(event) {
-            var $this = $(this);
-            $this.closest('.color-picker').find('span.selected').removeClass('selected');
-            $this.addClass('selected');
-            var color = $this.data('value');
-            $this.closest('label').find('input').val(color);
-            comm.emit('cardUpdate', {key: instance.key, field: 'color', value: color});
-        });
-
-        editBox.$('.delete-card').on('click', function(event) {
-            if (!confirm('Are you sure you wish to delete "' + instance.title + '"?')) return;
-            editBox.close();
-            comm.emit('cardDelete', {key: instance.key});
-        });
-
-    }
 
     return {
         get: function(data) {
