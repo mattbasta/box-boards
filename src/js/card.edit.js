@@ -59,27 +59,7 @@ define('card.edit', ['collabs', 'comm', 'popup'], function(collabs, comm, Popup)
             comm.emit('cardUpdate', {key: instance.key, field: 'members', value: instance.members});
             setMemberList();
         });
-        editBox.$('.members input').on('keydown', function(e) {
-            if (e.keyCode < 48 || e.keyCode > 90 && e.keyCode < 96) {
-                return;
-            }
-            var value = $(this).val();
-            if (this.selectionEnd !== value.length) {
-                return;
-            }
-            console.log(value.substr(0, this.selectionStart));
-            $(this).val(value.substr(0, this.selectionStart));
-        });
-        editBox.$('.members input').on('keyup', function(e) {
-            if (e.keyCode === 13) {
-                e.preventDefault();
-                addCollab();
-                return;
-            }
-            if (e.keyCode < 48 || e.keyCode > 90 && e.keyCode < 96) {
-                return;
-            }
-
+        editBox.$('.members input').on('input', function(e) {
             var $this = $(this);
 
             var currentLower = $this.val().toLowerCase();
@@ -102,10 +82,15 @@ define('card.edit', ['collabs', 'comm', 'popup'], function(collabs, comm, Popup)
                 return;
             }
 
-            console.log(startIndex, collab.length, currentLower, $this.val() + collab.substr(startIndex));
             $this.val($this.val() + collab.substr(startIndex));
             this.setSelectionRange(startIndex, collab.length, 'forward');
-
+        });
+        editBox.$('.members input').on('keyup', function(e) {
+            if (e.keyCode !== 13) {
+                return;
+            }
+            e.preventDefault();
+            addCollab();
         });
 
         editBox.$('[data-prop]').on('change, blur', function(event) {
