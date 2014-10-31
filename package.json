@@ -4,12 +4,11 @@
   "description": "An app for doing kanban on Box",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "mocha"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://gitenterprise.inside-box.net/mbasta/boards.git"
+    "url": "https://github.com/mattbasta/box-boards"
   },
   "keywords": [
     "boards",
